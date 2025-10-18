@@ -46,19 +46,6 @@ Confusion Matrix:
  [  1   1   5   2   0   8]
  [  0   4  11   3  64  45]
  [  0   0   6   2  26 122]]
-
- Best Accuracy: 0.763601541519165
-1/1 [==============================] - 0s 155ms/step - loss: 1.1698 - accuracy: 0.7077
-18/18 [==============================] - 0s 550us/step
-POISONED
-Testing - Prediction Accuracy: 0.7076648841354723
-Confusion Matrix:
-[[ 91  21   5   0   1   4]
- [ 22  63   2   2   0   1]
- [  0   0  48   0   1   0]
- [  3   1   3   2   3   5]
- [  1   2  14   3  71  36]
- [  1   0  11   1  21 122]]
 ```
 
 ### First pass Federated Learning Poisoning Mitigation (Submodel)
@@ -69,7 +56,7 @@ This tends to have a higher training accuracy, but falls short when making predi
 (THE PROVIDED RESULTS ARE AN OUTLIER FROM WHAT NORMALLY APPEARS...)
 ```
 Best Accuracy: 0.7054597735404968
-1/1 [==============================] - ETA: 0s - loss: 1.51/1 [==============================] - 0s 147ms/step - loss: 1.5152 - accuracy: 0.6988
+1/1 [==============================] - 0s 147ms/step - loss: 1.5152 - accuracy: 0.6988
 18/18 [==============================] - 0s 804us/step
 Testing - Prediction Accuracy: 0.6987522281639929
 Confusion Matrix:
@@ -87,7 +74,7 @@ According to [this](https://www.tensorflow.org/federated/tutorials/tuning_recomm
 In testing, it's done little to improve results, and actually creates more false negatives than other models.
 ```
 Best Accuracy: 0.7448275685310364
-1/1 [==============================] - ETA: 0s - loss: 1.1/1 [==============================] - 0s 154ms/step - loss: 1.2580 - accuracy: 0.6542
+1/1 [==============================] - 0s 154ms/step - loss: 1.2580 - accuracy: 0.6542
 18/18 [==============================] - 0s 520us/step
 Testing - Prediction Accuracy: 0.6541889483065954
 Confusion Matrix:
@@ -99,7 +86,7 @@ Confusion Matrix:
  [ 1  2 20  0 34 99]]
 
 Best Accuracy: 0.7015325427055359
-1/1 [==============================] - ETA: 0s - loss: 1.1/1 [==============================] - 0s 158ms/step - loss: 1.2719 - accuracy: 0.6738
+1/1 [==============================] - 0s 158ms/step - loss: 1.2719 - accuracy: 0.6738
 18/18 [==============================] - 0s 547us/step
 Testing - Prediction Accuracy: 0.6737967914438503
 Confusion Matrix:
@@ -111,4 +98,19 @@ Confusion Matrix:
  [  2   0   0   4  19 131]]
 ```
 
-### Federated Learning Poisoning Mitigation (KRUM Aggregation)
+### Federated Learning Poisoning Mitigation (Robust Federated Aggregation)
+According to the paper, this is designed to perform better than FedAvg by using the Geometric Median. In their experimentation
+```
+Best Accuracy: 0.7371647357940674
+1/1 [==============================] - 0s 153ms/step - loss: 1.2159 - accuracy: 0.7130
+18/18 [==============================] - 0s 528us/step
+FEDERATED POISONED - KRUM
+Testing - Prediction Accuracy: 0.7130124777183601
+Confusion Matrix:
+[[ 74  42   0   2   0   4]
+ [ 26  62   0   0   1   1]
+ [  0   0  47   0   2   0]
+ [  3   1   0   4   5   4]
+ [  0   7   1   4  86  29]
+ [  0   1   0   2  26 127]]
+```
