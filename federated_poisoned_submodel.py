@@ -39,13 +39,13 @@ trusted_dataset = tf.data.Dataset.from_tensors((split_train_data[0], split_train
 history = model.fit(trusted_dataset, epochs=5000)
 train_evaluation = model.evaluate(trusted_dataset) # Provide confirmation that the trusted model has trained appropriately.
 
-time.sleep(5)
-
 trainer = shared.tff_setup(model, input_spec, shared.learning_rate)
 
 # Run the federated learning process over a number of rounds. 
 # Keep track of the state with the highest training accuracy.
-max_accuracy_result = shared.federated_train(trainer, train_datasets, shared.round_count)
+max_accuracy_result, accuracy, loss = shared.federated_train(trainer, train_datasets, shared.round_count)
+
+shared.training_plot(accuracy, loss, "federated_poisoned_submodel")
 
 shared.federated_evaluation(input_spec, max_accuracy_result, test_dataset, test_data, test_label, "FEDERATED POISONED - SUBMODEL PRE-TRAINING")
 

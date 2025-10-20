@@ -38,7 +38,7 @@ model = shared.build_model((input_spec[0].shape))
 model = tff.learning.models.functional_model_from_keras(
     model, keras.losses.SparseCategoricalCrossentropy(), 
     input_spec,
-    metrics_constructor=collections.OrderedDict(accuracy=keras.metrics.SparseCategoricalAccuracy)
+    metrics_constructor=collections.OrderedDict(accuracy=keras.metrics.SparseCategoricalAccuracy, loss=keras.metrics.SparseCategoricalCrossentropy)
 )
 
 trainer = tff.learning.algorithms.build_weighted_fed_avg(
@@ -49,7 +49,9 @@ trainer = tff.learning.algorithms.build_weighted_fed_avg(
 
 # Run the federated learning process over a number of rounds. 
 # Keep track of the state with the highest training accuracy.
-max_accuracy_result = shared.federated_train(trainer, train_datasets, shared.round_count)
+max_accuracy_result, accuracy, loss = shared.federated_train(trainer, train_datasets, shared.round_count)
 
-shared.federated_evaluation(input_spec, max_accuracy_result, test_dataset, test_data, test_label, "FEDERATED POISONED ZEROED")
+shared.training_plot(accuracy, loss, "federated_poisoned_rfa")
+
+shared.federated_evaluation(input_spec, max_accuracy_result, test_dataset, test_data, test_label, "FEDERATED POISONED RFA")
 

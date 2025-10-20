@@ -12,17 +12,16 @@ input_spec = train_data.shape
 
 model = shared.build_model(input_spec)
 
-history = model.fit(train_dataset, epochs=shared.round_count)
+history = model.fit(train_dataset, epochs=shared.round_count, verbose=0)
+
+shared.training_plot(history.history['accuracy'], history.history['loss'], "non-federated_baseline")
 
 # Evaluate the model
-def evaluate(train_dataset, test_dataset):
-    train_evaluation = model.evaluate(train_dataset)
-    test_evaluation = model.evaluate(test_dataset)
-    return train_evaluation, test_evaluation
-
-train_evaluation, test_evalutaion = evaluate(train_dataset, test_dataset)
+train_evaluation = model.evaluate(train_dataset)
+test_evaluation = model.evaluate(test_dataset)
 
 prediction = model.predict(test_data).argmax(axis=1)
 accuracy_score = accuracy_score(test_label, prediction)
 confusion_matrix = confusion_matrix(test_label, prediction)
+print("NON-FEDERATED BASELINE")
 print(f"Testing - Prediction Accuracy: {accuracy_score}\nConfusion Matrix:\n{confusion_matrix}")

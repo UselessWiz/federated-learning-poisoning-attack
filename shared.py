@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow_federated as tff
 import collections
 import sklearn
+import matplotlib.pyplot as plt
 
 # MODEL PARAMETERS
 hidden_layer_count  = 10
@@ -76,7 +77,7 @@ def tff_setup(model, input_spec, learning_rate):
     model = tff.learning.models.functional_model_from_keras(
         model, keras.losses.SparseCategoricalCrossentropy(), 
         input_spec,
-        metrics_constructor=collections.OrderedDict(accuracy=keras.metrics.SparseCategoricalAccuracy)
+        metrics_constructor=collections.OrderedDict(accuracy=keras.metrics.SparseCategoricalAccuracy, loss=keras.metrics.SparseCategoricalCrossentropy)
     )
 
     # Create the federated learning training setup
@@ -90,15 +91,19 @@ def tff_setup(model, input_spec, learning_rate):
 def federated_train(trainer, train_datasets, round_count):
     state = trainer.initialize()
     max_accuracy_result = None
+    accuracy = []
+    loss = []
     for i in range(round_count):
         result = trainer.next(state, train_datasets)
         state = result.state
         metrics = result.metrics
+        accuracy.append(metrics['client_work']['train']['accuracy'])
+        loss.append(metrics['client_work']['train']['loss'])
         if max_accuracy_result is None or \
             metrics['client_work']['train']['accuracy'] >= max_accuracy_result.metrics['client_work']['train']['accuracy']:
             max_accuracy_result = result
-        print(f"Round {i} Accuracy: {metrics['client_work']['train']['accuracy']}")
-    return max_accuracy_result
+        # print(f"Round {i} Accuracy: {metrics['client_work']['train']['accuracy']}, Loss: {metrics['client_work']['train']['loss']}")
+    return max_accuracy_result, accuracy, loss
     
 def federated_evaluation(input_spec, max_accuracy_result, test_dataset, test_data, test_label, model_name):
     # Prepare an inference model based on the best performing state.
@@ -116,3 +121,16 @@ def federated_evaluation(input_spec, max_accuracy_result, test_dataset, test_dat
     confusion_matrix = sklearn.metrics.confusion_matrix(test_label, prediction)
     print(model_name)
     print(f"Testing - Prediction Accuracy: {accuracy_score}\nConfusion Matrix:\n{confusion_matrix}")
+
+def training_plot(accuracy, loss, model_name):
+    fig, ax1 = plt.subplots()
+    ax1.set_xlabel("Epoch")
+    ax1.set_ylabel("Accuracy")
+    ax1.plot(accuracy, color="tab:blue")
+
+    ax2 = ax1.twinx()
+    ax2.set_ylabel("Loss")
+    ax2.plot(loss, color="tab:orange")
+
+    fig.legend(['Accuracy', 'Loss'], loc='upper left')
+    plt.savefig(f'graphs/{model_name}.png')

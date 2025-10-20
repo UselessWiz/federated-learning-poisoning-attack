@@ -26,6 +26,8 @@ trainer = shared.tff_setup(model, input_spec, shared.learning_rate)
 
 # Run the federated learning process over a number of rounds. 
 # Keep track of the state with the highest training accuracy.
-max_accuracy_result = shared.federated_train(trainer, train_datasets, shared.round_count)
+max_accuracy_result, accuracy, loss = shared.federated_train(trainer, train_datasets, shared.round_count)
+
+shared.training_plot(accuracy, loss, "federated_poisoned")
 
 shared.federated_evaluation(input_spec, max_accuracy_result, test_dataset, test_data, test_label, "FEDERATED POISONED")
